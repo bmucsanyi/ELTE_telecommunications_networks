@@ -1,6 +1,5 @@
 import subprocess
 
-# TODO: verziókezelni!!!
 print("~~~~~~~~~~~~~~~~~~~~")
 # Old interface:
 returncode = subprocess.call(["dir", "/B"], shell=True)
