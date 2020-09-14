@@ -1,5 +1,6 @@
 from subprocess import PIPE, Popen
 from time import sleep
+
 cmd = ["sleep", "5"]
 
 process = []
@@ -11,6 +12,6 @@ for p in process:
     p.wait()
 
 for p in process:
-    print(p.communicate())
+    print(p.communicate()[0].decode('utf-8'))
 
-print("kész")
+print("Finished")
