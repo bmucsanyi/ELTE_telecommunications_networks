@@ -167,7 +167,7 @@ def main(verbose=True):
     pretty_print("last", args.file_name, last_ten)
 
     websites = first_ten + last_ten
-    traceroute_data, ping_data = collect_data(websites, 10, verbose)
+    traceroute_data, ping_data = collect_data(websites, 20, verbose)
 
     save_data(traceroute_data, ping_data, verbose)
 
