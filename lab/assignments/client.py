@@ -110,7 +110,7 @@ def collect_data(websites, max_subprocesses, verbose):
                 "target": target,
                 "output": output,
             }
-            ping_data["traces"].append(current_data)
+            ping_data["pings"].append(current_data)
 
         p_subprocesses.append((Popen(["ping", website, "-c", "10"],
                                      stdout=PIPE,
@@ -132,7 +132,7 @@ def collect_data(websites, max_subprocesses, verbose):
             "target": target,
             "output": output,
         }
-        ping_data["traces"].append(current_data)
+        ping_data["pings"].append(current_data)
 
     if verbose:
         print("Finished collecting data!")
@@ -168,10 +168,10 @@ def main(verbose=True):
         pretty_print("last", args.file_name, last_ten)
 
     websites = first_ten + last_ten
-    traceroute_data, ping_data = collect_data(websites, 20, verbose)
+    traceroute_data, ping_data = collect_data(websites, 40, verbose)
 
     save_data(traceroute_data, ping_data, verbose)
 
 
 if __name__ == "__main__":
-    main(verbose=False)
+    main(verbose=True)
