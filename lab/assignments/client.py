@@ -163,8 +163,9 @@ def main(verbose=True):
     last_ten = tail(args.file_name, 10)
     last_ten = process_text(last_ten)
 
-    pretty_print("first", args.file_name, first_ten)
-    pretty_print("last", args.file_name, last_ten)
+    if verbose:
+        pretty_print("first", args.file_name, first_ten)
+        pretty_print("last", args.file_name, last_ten)
 
     websites = first_ten + last_ten
     traceroute_data, ping_data = collect_data(websites, 20, verbose)
