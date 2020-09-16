@@ -65,17 +65,18 @@ def collect_data(websites, max_subprocesses, verbose):
         else:
             return opsys.lower()
 
-    def setup():
+    def setup(code):
+        collection = "traces" if code == "traceroute" else "pings"
         return {
             "date": datetime.date.today().strftime("%Y%m%d"),
             "system": get_system(),
-            "traces": [],
+            collection: [],
         }
 
     if verbose:
         print("Starting collecting data...")
 
-    traceroute_data, ping_data = setup(), setup()
+    traceroute_data, ping_data = setup("traceroute"), setup("ping")
 
     tr_subprocesses = deque()
     p_subprocesses = deque()
@@ -172,4 +173,4 @@ def main(verbose=True):
 
 
 if __name__ == "__main__":
-    main()
+    main(verbose=False)
