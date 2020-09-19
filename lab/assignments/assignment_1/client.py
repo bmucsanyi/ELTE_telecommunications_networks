@@ -16,8 +16,10 @@ Kimeneti fájlok (ld. diák):
     ping.json
 
 A teszt 10 perc után lelövi a futást!!!
-A párhuzamos futtatás esetén vigyázzunk és limitáljuk a processek maximális számát!!!
-Leadás: A program leadása a BE-AD rendszeren .zip formátumban, amiben egy client.py szerepeljen!
+A párhuzamos futtatás esetén vigyázzunk és limitáljuk a processek
+maximális számát!!!
+Leadás: A program leadása a BE-AD rendszeren .zip formátumban,
+amiben egy client.py szerepeljen!
 """
 import argparse
 from collections import deque
@@ -55,6 +57,49 @@ def pretty_print(adj, file_name, list):
         print(f"\t{entry}")
 
 
+def add_subprocess(command, website, subprocesses, max_subprocesses, data):
+    if command not in ["traceroute", "ping"]:
+        raise ValueError("Invalid command!")
+
+    if len(subprocesses) == max_subprocesses // 2:
+        # The traceroute subprocess started last
+        subprocesses[0][0].wait()
+        output = subprocesses[0][0].communicate()[0].decode('utf-8')
+        target = subprocesses[0][1]
+        subprocesses.popleft()
+
+        current_data = {
+            "target": target,
+            "output": output,
+        }
+
+        key = "traces" if command == "traceroute" else "pings"
+        data[key].append(current_data)
+
+    if command == "traceroute":
+        command_list = [command, website, "-m", "30"]
+    else:
+        command_list = [command, website, "-c", "10"]
+
+    subprocesses.append((Popen(command_list, stdout=PIPE,
+                               stderr=PIPE), website))
+
+
+def finish_subprocesses(command, subprocesses, data):
+    if command not in ["traceroute", "ping"]:
+        raise ValueError("Invalid command!")
+
+    for subprocess, target in subprocesses:
+        subprocess.wait()
+        output = subprocess.communicate()[0].decode('utf-8')
+        current_data = {
+            "target": target,
+            "output": output,
+        }
+        key = "traces" if command == "traceroute" else "pings"
+        data[key].append(current_data)
+
+
 def collect_data(websites, max_subprocesses, verbose):
     # https://superuser.com/questions/731623/opensuse-root-commands-error (PATH=$PATH:/usr/sbin)
     # https://unix.stackexchange.com/questions/26047/how-to-correctly-add-a-path-to-path
@@ -80,59 +125,18 @@ def collect_data(websites, max_subprocesses, verbose):
 
     tr_subprocesses = deque()
     p_subprocesses = deque()
+
     for index, website in enumerate(websites):
         if verbose:
             print(f"{index + 1} {website}")
-        if len(tr_subprocesses) == max_subprocesses // 2:
-            # The traceroute subprocess started last
-            tr_subprocesses[0][0].wait()
-            output = tr_subprocesses[0][0].communicate()[0].decode('utf-8')
-            target = tr_subprocesses[0][1]
-            tr_subprocesses.popleft()
 
-            current_data = {
-                "target": target,
-                "output": output,
-            }
-            traceroute_data["traces"].append(current_data)
+        add_subprocess("traceroute", website, tr_subprocesses,
+                       max_subprocesses, traceroute_data)
+        add_subprocess("ping", website, p_subprocesses, max_subprocesses,
+                       ping_data)
 
-        tr_subprocesses.append((Popen(["traceroute", website, "-m", "30"],
-                                      stdout=PIPE,
-                                      stderr=PIPE), website))
-
-        if len(p_subprocesses) == max_subprocesses // 2:
-            p_subprocesses[0][0].wait()  # The ping subprocess started last
-            output = p_subprocesses[0][0].communicate()[0].decode('utf-8')
-            target = p_subprocesses[0][1]
-            p_subprocesses.popleft()
-
-            current_data = {
-                "target": target,
-                "output": output,
-            }
-            ping_data["pings"].append(current_data)
-
-        p_subprocesses.append((Popen(["ping", website, "-c", "10"],
-                                     stdout=PIPE,
-                                     stderr=PIPE), website))
-
-    for subprocess, target in tr_subprocesses:
-        subprocess.wait()
-        output = subprocess.communicate()[0].decode('utf-8')
-        current_data = {
-            "target": target,
-            "output": output,
-        }
-        traceroute_data["traces"].append(current_data)
-
-    for subprocess, target in p_subprocesses:
-        subprocess.wait()
-        output = subprocess.communicate()[0].decode('utf-8')
-        current_data = {
-            "target": target,
-            "output": output,
-        }
-        ping_data["pings"].append(current_data)
+    finish_subprocesses("traceroute", tr_subprocesses, traceroute_data)
+    finish_subprocesses("ping", p_subprocesses, ping_data)
 
     if verbose:
         print("Finished collecting data!")
@@ -152,11 +156,7 @@ def save_data(traceroute_data, ping_data, verbose):
         print("Data is saved!")
 
 
-def main(verbose=True):
-    parser = argparse.ArgumentParser()
-    parser.add_argument('file_name')
-    args = parser.parse_args()
-
+def main(args, verbose=True):
     first_ten = head(args.file_name, 10)
     first_ten = process_text(first_ten)
 
@@ -174,4 +174,7 @@ def main(verbose=True):
 
 
 if __name__ == "__main__":
-    main(verbose=True)
+    parser = argparse.ArgumentParser()
+    parser.add_argument('file_name')
+    args = parser.parse_args()
+    main(args, verbose=True)
