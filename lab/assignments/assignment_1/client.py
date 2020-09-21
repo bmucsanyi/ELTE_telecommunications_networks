@@ -62,7 +62,7 @@ def add_subprocess(command, website, subprocesses, max_subprocesses, data):
         raise ValueError("Invalid command!")
 
     if len(subprocesses) == max_subprocesses // 2:
-        # The traceroute subprocess started last
+        # The subprocess started last
         subprocesses[0][0].wait()
         output = subprocesses[0][0].communicate()[0].decode('utf-8')
         target = subprocesses[0][1]
