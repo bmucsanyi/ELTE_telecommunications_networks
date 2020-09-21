@@ -15,7 +15,7 @@ while True:
 
         print("Connected:", client_addr)
 
-        data = client.recv(16)
+        data = client.recv(100)
         print("Received:", data.decode())
 
         client.sendall("Received!".encode())
