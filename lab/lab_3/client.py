@@ -1,15 +1,16 @@
 import socket
 
-server_addr = ('DESKTOP-DC75AQS', 10000)  # localhost ---DNS---> 127.0.0.1
+server_addr = ('192.168.0.111', 10000)  # localhost ---DNS---> 127.0.0.1
 # We want to connect to this host (not case sensitive), to this exact port.
 # If we connect to a wrong port,
 # we get a ConnectionRefusedError.
 
-# If we type 'DESKTOP-DC75AQS' (socket.gethostname()),
+# If we type '192.168.0.111'
+# (socket.gethostbyname(socket.gethostname()) on server),
 # we also get a ConnectionRefusedError,
 # as we only opened the socket to the localhost!
 # These two are not the same!
-# With 'DESKTOP-DC75AQS' opened on the server,
+# With '192.168.0.111' opened on the server,
 # we can reach the server from the whole LAN.
 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as client:  # like a file descriptor
