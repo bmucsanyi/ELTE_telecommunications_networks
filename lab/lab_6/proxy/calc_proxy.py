@@ -2,7 +2,7 @@ import socket
 import _thread as thread
 
 
-def recv_all(sock, length):
+def recvall(sock, length):
     return sock.recv(length, socket.MSG_WAITALL)
 
 
@@ -12,28 +12,30 @@ def handle_client(client_socket, client_addr):
     conn.connect(("localhost", 5555))
 
     while True:
-        s = recv_all(client_socket, 12)
+        s = recvall(client_socket, 12)
         if len(s) == 0:
             print("Connection closed by", client_addr)
             conn.close()
             return
 
         conn.sendall(s)
-        resp = recv_all(conn, 4)
+        resp = recvall(conn, 4)
         if len(resp) == 0:
             print("Target connection closed")
             return
 
         client_socket.sendall(resp)
 
-    print("Bye Client!")
-
 
 # create sercver socket
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+# When retrieving a socket option, or setting it, you specify the option name as
+# well as the level. When level = SOL_SOCKET, the item will be searched for in
+# the socket itself.
+# 1 means True.
 s.bind(("localhost", 8888))
-s.listen(1)
+s.listen(1)  # the number of unaccepted connections that the system will allow before refusing new connections
 
 while True:
     # accept client

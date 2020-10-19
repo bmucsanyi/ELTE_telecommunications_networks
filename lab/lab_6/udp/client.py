@@ -8,7 +8,7 @@ s.settimeout(5)
 s.sendto("HELLO SERVER!\n".encode(), ("localhost", 5555))
 
 # receive data
-data, addr = s.recvfrom(4096)
+data, addr = s.recvfrom(4096)  # waits 5s
 print(addr, data.decode())
 
 s.close()

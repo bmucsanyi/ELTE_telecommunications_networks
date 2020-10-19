@@ -1,7 +1,11 @@
+"""General tcp proxy template.
+
+Doesn't work with http requests."""
+
 import socket
 import select
 
-proxy_destination = ("web.mit.edu", 80)
+proxy_destination = ("localhost", 5555)
 
 proxy_server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 proxy_server.setblocking(0)
@@ -42,8 +46,10 @@ while True:
         else:
             data = s.recv(1024)
             print(s.getpeername(), data)
+            
             if s in proxy_inputs:
                 conn = in_to_out[s]
+
                 if len(data) == 0:
                     print("Client left:", s.getpeername())
                     inputs.remove(s)
@@ -53,11 +59,11 @@ while True:
                     proxy_outputs.remove(conn)
                     del in_to_out[s]
                     del out_to_in[conn]
-                    continue
-
-                conn.sendall(data)
+                else:
+                    conn.sendall(data)
             else:
                 inp = out_to_in[s]
+
                 if len(data) == 0:
                     print("Output closed:", s.getpeername())
                     inp.close()
@@ -67,6 +73,5 @@ while True:
                     proxy_outputs.remove(s)
                     del in_to_out[inp]
                     del out_to_in[s]
-                    continue
-
-                inp.sendall(data)
+                else:
+                    inp.sendall(data)

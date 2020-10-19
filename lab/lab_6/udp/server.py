@@ -1,22 +1,22 @@
 import socket
-import struct
-import json
+# import struct
+# import json
 
-MAX_JSON_LENGTH = 1020
-JSON_STRUCT_SIZE = MAX_JSON_LENGTH + 4
+# MAX_JSON_LENGTH = 1020
+# JSON_STRUCT_SIZE = MAX_JSON_LENGTH + 4
 
-packer = struct.Struct("i " + str(MAX_JSON_LENGTH) + "s")
-
-
-def dict_to_jsonstruct(d):
-    s = json.dumps(d)
-    l = len(s)
-    return packer.pack(l, s.encode("utf-8"))
+# packer = struct.Struct("i " + str(MAX_JSON_LENGTH) + "s")
 
 
-def jsonstruct_to_dict(s):
-    d = packer.unpack(s)
-    return json.loads(d[1][0:d[0]].decode("utf-8"))
+# def dict_to_jsonstruct(d):
+#     s = json.dumps(d)
+#     l = len(s)
+#     return packer.pack(l, s.encode())
+
+
+# def jsonstruct_to_dict(s):
+#     d = packer.unpack(s)
+#     return json.loads(d[1][:d[0]].decode())
 
 
 # server socket
