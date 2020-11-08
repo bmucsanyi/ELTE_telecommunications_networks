@@ -54,8 +54,8 @@ def moderate_game(args, verbose=False):
                         if not data:
                             if verbose:
                                 print('Bye client!')
-                                inputs.remove(sock)
-                                sock.close()
+                            inputs.remove(sock)
+                            sock.close()
                         else:
                             comp, num = get_guess_from_struct(data)
                             comp = comp.decode()
