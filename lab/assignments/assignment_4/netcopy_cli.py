@@ -1,17 +1,12 @@
 import argparse
 import sys
 import socket
-import struct
 import hashlib
 import time
 
-def create_in_struct(file_id, time, length, checksum):
-    return struct.pack(f'3sicicic{length}s', b'BE|', file_id, b'|', time, b'|',
-                       length, b'|', checksum)
-
-
-def create_out_struct(file_id):
-    return struct.pack('3si', b'KI|', file_id)
+def create_in_msg(file_id, time, length, checksum):
+    message = f'BE|{file_id}|{time}|{length}|{checksum}'.encode()
+    return message
 
 
 def send_file(args, verbose=True):
@@ -33,10 +28,10 @@ def send_file(args, verbose=True):
 
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as client:
         client.connect((args.chsum_srv_ip, args.chsum_srv_port))
-        checksum = md5.digest()
-        in_struct = create_in_struct(args.file_id, 60, len(checksum),
-                                     checksum)
-        client.sendall(in_struct)
+        checksum = md5.hexdigest()
+        in_msg = create_in_msg(args.file_id, 60, len(checksum),
+                                  checksum)
+        client.sendall(in_msg)
 
     if verbose:
         print('Finished sending checksum.')

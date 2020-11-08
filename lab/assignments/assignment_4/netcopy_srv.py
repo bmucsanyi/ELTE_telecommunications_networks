@@ -5,8 +5,9 @@ import socket
 import struct
 
 
-def create_out_struct(file_id):
-    return struct.pack('3si', b'KI|', file_id)
+def create_out_msg(file_id):
+    message = f'KI|{file_id}'.encode()
+    return message
 
 
 def recvall(sock, length):
@@ -14,9 +15,16 @@ def recvall(sock, length):
 
 
 def test_checksum(calculated_checksum, client):
-    data = recvall(client, 5)
-    length, _ = struct.unpack('ic', data)
-    real_checksum = recvall(client, length)
+    # data = recvall(client, 5)
+    data = b''
+    while True:
+        chunk = client.recv(1)
+        if chunk == b'|':
+            length = int(data.decode())
+            break
+        data += chunk
+
+    real_checksum = recvall(client, length).decode()
 
     if real_checksum == calculated_checksum:
         print('CSUM OK')
@@ -50,9 +58,9 @@ def handle_client(args, verbose=True):
 
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as client:
          client.connect((args.chsum_srv_ip, args.chsum_srv_port))
-         out_struct = create_out_struct(args.file_id)
-         client.sendall(out_struct)
-         test_checksum(md5.digest(), client)
+         out_msg = create_out_msg(args.file_id)
+         client.sendall(out_msg)
+         test_checksum(md5.hexdigest(), client)
 
 
 if __name__ == '__main__':

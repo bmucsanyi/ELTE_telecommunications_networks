@@ -7,13 +7,14 @@ def recvall(sock, length):
     return sock.recv(length, socket.MSG_WAITALL)
 
 
-def create_in_struct(file_id, time, length, checksum):
-    return struct.pack(f'3sicicic{length}s', b'BE|', file_id, b'|', time, b'|',
-                       length, b'|', checksum)
+def create_in_msg(file_id, time, length, checksum):
+    message = f'BE|{file_id}|{time}|{length}|{checksum}'.encode()
+    return message
 
 
-def create_out_struct(file_id):
-    return struct.pack('3si', b'KI|', file_id)
+def create_out_msg(file_id):
+    message = f'KI|{file_id}'.encode()
+    return message
 
 
 def main():
@@ -21,37 +22,37 @@ def main():
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
         sock.connect(('localhost', 10101))
 
-        in_struct = create_in_struct(1237671, 60, 12, b'abcdefabcdef')
-        sock.sendall(in_struct)
+        in_msg = create_in_msg(1237671, 60, 12, 'abcdefabcdef')
+        sock.sendall(in_msg)
 
         resp = recvall(sock, 2)
 
         assert resp == b'OK'
         print('resp was OK')
 
-        out_struct = create_out_struct(123)
-        sock.sendall(out_struct)
+        out_msg = create_out_msg(123)
+        sock.sendall(out_msg)
 
-        resp = struct.unpack('ic', recvall(sock, 5))
+        resp = recvall(sock, 2)
 
-        assert resp == (0, b'|')
+        assert resp == b'0|'
         print('resp was OK')
 
-        out_struct = create_out_struct(1237671)
-        sock.sendall(out_struct)
+        out_msg = create_out_msg(1237671)
+        sock.sendall(out_msg)
 
-        resp = struct.unpack('ic12s', recvall(sock, 17))
+        resp = sock.recv(15)  # recvall(sock, 15)
 
-        assert resp == (12, b'|', b'abcdefabcdef')
+        assert resp == b'12|abcdefabcdef'
         print('resp was OK')
 
-        out_struct = create_out_struct(1237671)
+        out_msg = create_out_msg(1237671)
         time.sleep(65)
-        sock.sendall(out_struct)
+        sock.sendall(out_msg)
 
-        resp = struct.unpack('ic', recvall(sock, 5))
+        resp = recvall(sock, 2)
 
-        assert resp == (0, b'|')
+        assert resp == b'0|'
         print('resp was OK')
 
 
