@@ -2,7 +2,6 @@ import argparse
 import sys
 import hashlib
 import socket
-import struct
 
 
 def create_out_msg(file_id):
@@ -15,7 +14,6 @@ def recvall(sock, length):
 
 
 def test_checksum(calculated_checksum, client):
-    # data = recvall(client, 5)
     data = b''
     while True:
         chunk = client.recv(1)
@@ -57,10 +55,10 @@ def handle_client(args, verbose=True):
             print('Finished writing data.')
 
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as client:
-         client.connect((args.chsum_srv_ip, args.chsum_srv_port))
-         out_msg = create_out_msg(args.file_id)
-         client.sendall(out_msg)
-         test_checksum(md5.hexdigest(), client)
+        client.connect((args.chsum_srv_ip, args.chsum_srv_port))
+        out_msg = create_out_msg(args.file_id)
+        client.sendall(out_msg)
+        test_checksum(md5.hexdigest(), client)
 
 
 if __name__ == '__main__':

@@ -18,6 +18,7 @@ def main():
             if p.poll() == None:  # If not finished
                 run_counter += 1
             elif p not in done:  # If finished, but not yet handled
+                # communicate returns (stdout_data, stderr_data)
                 print(p.communicate()[0].decode('utf-8'))
                 done.append(p)
         if run_counter > 0:

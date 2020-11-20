@@ -8,7 +8,7 @@ def main():
     try:
         port = int(sys.argv[1])
     except IndexError:
-        port = 0
+        port = 11111
     server_addr = ('localhost', port)
 
     server.bind(server_addr)

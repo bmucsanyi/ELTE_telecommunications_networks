@@ -16,7 +16,7 @@ def create_result_struct(r):
 def main():
     # create server socket
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server.setblocking(False)  # we can finally Ctrl + C out of it on Windows
+    server.setblocking(False)  # we can also finally Ctrl + C out of it on Windows
     # the clients should set this very carefully...
     server.bind(("localhost", 5555))
     server.listen(1)

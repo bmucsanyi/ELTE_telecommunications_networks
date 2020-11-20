@@ -23,7 +23,7 @@ def main():
             client.sendall("Received!".encode())
 
             client.close()
-        except socket.timeout as p:
+        except socket.timeout:
             pass
         except socket.error as e:
             print(e)

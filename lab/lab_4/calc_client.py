@@ -18,7 +18,8 @@ def get_result_from_struct(s):
 def main():
     # connect to the server
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # standard tcp connection
-    s.connect(("localhost", 5555))  # connect blocks in the case of tcp
+    # connect blocks in the case of tcp (udp doesn't even need it)
+    s.connect(("localhost", 5555))
 
     while True:
         # read command
