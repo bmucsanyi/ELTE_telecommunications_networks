@@ -9,7 +9,7 @@ def recvall(sock, length):
 def handle_client(client_socket, client_addr):
     print("New client:", client_addr)
     conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    conn.connect(("localhost", 5555))
+    conn.connect(("localhost", 5555))  # connect to server
 
     while True:
         s = recvall(client_socket, 12)

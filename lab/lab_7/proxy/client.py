@@ -19,9 +19,9 @@ s.connect(("localhost", 8888))  # port of proxy
 while True:
     # read command
     print("New calculation")
-    p1 = int(input("\tparam1> "))
+    p1 = int(input("\tparam_1> "))
     op = input("\toperator> ")
-    p2 = int(input("\tparam2> "))
+    p2 = int(input("\tparam_2> "))
 
     # send to the server
     if op == "X":

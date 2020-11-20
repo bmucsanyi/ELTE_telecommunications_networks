@@ -27,10 +27,10 @@ def main():
     p1 = subprocess.Popen(["dir", "d:\\", "/b"],
                           shell=True,
                           stdout=subprocess.PIPE)
-    # p2 = subprocess.Popen(["find", "\"V\""], shell=True, stdin=p1.stdout, stdout=subprocess.PIPE)
+    p2 = subprocess.Popen(["find", '"V"'], shell=True, stdin=p1.stdout, stdout=subprocess.PIPE)
 
-    # print(p2.communicate()[0].decode("utf-8").split("\n"))  # Access denied, for some reason.
     print(p1.communicate()[0].decode("utf-8"))  # new line is \r\n
+    print(p2.communicate()[0].decode("utf-8").split("\n"))  # Access denied, for some reason.
 
 
 if __name__ == "__main__":

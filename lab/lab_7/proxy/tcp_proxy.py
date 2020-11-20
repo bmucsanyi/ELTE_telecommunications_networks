@@ -8,9 +8,14 @@ import select
 proxy_destination = ("localhost", 5555)
 
 proxy_server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-proxy_server.setblocking(0)
+proxy_server.setblocking(False)
+# bind() is used to associate the socket with the server address
 proxy_server.bind(("localhost", 8888))
+# calling listen() puts the socket into server mode,
+# and accept() waits for an incoming connection
 proxy_server.listen(10)
+# when you call sock.listen(n) and (n + m) connection requests come in
+# before you call accept, m of them are getting dropped
 
 inputs = [proxy_server]
 outputs = []
@@ -44,9 +49,10 @@ while True:
             out_to_in[conn] = client_socket
 
         else:
-            data = s.recv(1024)
+            data = s.recv(1024)  # global maximum
+            # Returns the remote address to which the socket is connected.
             print(s.getpeername(), data)
-            
+
             if s in proxy_inputs:
                 conn = in_to_out[s]
 
@@ -54,9 +60,10 @@ while True:
                     print("Client left:", s.getpeername())
                     inputs.remove(s)
                     proxy_inputs.remove(s)
-                    conn.close()
+                    s.close()
                     inputs.remove(conn)
                     proxy_outputs.remove(conn)
+                    conn.close()
                     del in_to_out[s]
                     del out_to_in[conn]
                 else:
@@ -67,6 +74,7 @@ while True:
                 if len(data) == 0:
                     print("Output closed:", s.getpeername())
                     inp.close()
+                    s.close()
                     inputs.remove(s)
                     inputs.remove(inp)
                     proxy_inputs.remove(inp)
