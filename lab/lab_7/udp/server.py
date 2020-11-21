@@ -21,10 +21,11 @@ import socket
 
 # server socket
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-s.bind(("localhost", 5555))
+s.bind(("localhost", 5555))  # A szerver itt is port-ra bind-ol.
+# Nincs listen, hiszen accept sem lesz.
 
 # receive data
-data, addr = s.recvfrom(4096)
+data, addr = s.recvfrom(4096)  # A szerver megkapja a küldő címét.
 print(addr, data.decode())
 
 # send response

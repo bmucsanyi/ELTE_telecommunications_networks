@@ -4,10 +4,15 @@ import subprocess
 def main():
     print("~~~~~~~~~~~~~~~~~~~~")
     # Old interface:
-    returncode = subprocess.call(["ls", "-l"], shell=True)
+    # If we provide a list and shell=True, it only calls the cmd with the first
+    # argument, and gives the others to the shell (thus ignoring it in this case),
+    # so when we call with shell=True (which we shouldn't do by the way), we
+    # should only provide a list with a single argument containing all the
+    # switches, too.
+    returncode = subprocess.call(["ls", "-l"])
     print(returncode)
     # New interface:
-    result = subprocess.run(["ls", "-l"], shell=True)
+    result = subprocess.run(["ls", "-l"])
     print(result.returncode)
     input()
 
