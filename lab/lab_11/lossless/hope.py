@@ -20,7 +20,7 @@ def handle_client(data, addr, sock):
 
 def main():
     with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as server:
-        # server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         server.bind(("localhost", 22222))
 
         while True:
