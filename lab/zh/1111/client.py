@@ -13,6 +13,8 @@ def main():
             print('invalid amount of money')
 
         num_list = [str(random.randint(1, 20)) for _ in range(5)] + [money]
+        print('Your tips are:', list(map(int, num_list))[:-1])
+
         data = ':'.join(num_list).encode()
 
         tcp.sendall(data)

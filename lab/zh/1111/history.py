@@ -1,6 +1,7 @@
 import socket
 import json
 import select
+import os
 
 
 def main():
@@ -34,23 +35,26 @@ def main():
                         tips = [int(num) for num in data[:-1]]
 
 
-                        resp = udp.recvfrom(256)
-                        resp = resp.decode().split(':')
-                        prize = int(resp[-1])
-                        winner_numbers = [int(num) for num in resp[:-1]]
+                        resp, _ = udp.recvfrom(256)
+                        decoded = resp.decode().split(':')
+                        prize = int(decoded[-1])
+                        winner_numbers = [int(num) for num in decoded[:-1]]
 
-                        with open('log.json', 'r') as f:
-                            log = json.load(f)
-                            if not len(log):
-                                log['winner_numbers'] = [winner_numbers]
-                                log['tips'] = [(tips, prize)]
-                            else:
+                        if os.path.isfile('log.json'):
+                            with open('log.json') as f:
+                                log = json.load(f)
                                 log['winner_numbers'].append(winner_numbers)
                                 log['tips'].append((tips, prize))
-                        with open('log.json', 'w') as f:
-                            json.dump(log, f)
+                            with open('log.json', 'w') as f:
+                                json.dump(log, f)
+                        else:
+                            with open('log.json', 'w') as f:
+                                log = {}
+                                log['winner_numbers'] = [winner_numbers]
+                                log['tips'] = [(tips, prize)]
+                                json.dump(log, f)
 
-                        tcp.sendall(resp)
+                        s.sendall(resp)  # tcp.sendall: broken pipe
 
 if __name__ == "__main__":
     main()

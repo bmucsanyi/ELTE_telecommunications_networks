@@ -9,12 +9,14 @@ def handle_client(data, addr, sock, winner_numbers):
     money = int(data[-1])
     tips = [int(num) for num in data[:-1]]
     
-    good_tips = len(set(tips) ^ set(winner_numbers))
+    good_tips = len(set(tips) & set(winner_numbers))
 
-    num_list = winner_numbers + [money * good_tips]
+    num_list = map(str, winner_numbers + [money * good_tips])
     data = ':'.join(num_list).encode()
 
     sock.sendto(data, addr)
+
+    return [random.randint(1, 20) for _ in range(5)]
 
 
 def main():
@@ -25,7 +27,7 @@ def main():
         winner_numbers = [random.randint(1, 20) for _ in range(5)]
         while True:
             data, addr = server.recvfrom(4096)
-            handle_client(data, addr, server, winner_numbers)
+            winner_numbers = handle_client(data, addr, server, winner_numbers)
 
 
 if __name__ == "__main__":
