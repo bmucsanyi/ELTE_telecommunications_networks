@@ -40,10 +40,12 @@ def main():
 
                         print('extra number:', extra_num)
                         full_value = sum(result) + extra_num
-                        print('result:', full_value, '\n')
+                        print('result:', full_value)
 
                         if full_value >= 500:
-                            print('I AM SO HAPPY')
+                            print('I AM SO HAPPY\n')
+                        else:
+                            print()
                     except socket.timeout:
                         print('no response from hope server')
                 else:
