@@ -12,7 +12,7 @@ def unpack(resp):
 
 
 def pack_history(winner_numbers, tips, money):
-    return struct.pack('10iQ', winner_numbers, tips, money)
+    return struct.pack('10iQ', *winner_numbers, *tips, money)
 
 
 def handle_client(data, addr, sock, winner_numbers, history):
@@ -22,8 +22,8 @@ def handle_client(data, addr, sock, winner_numbers, history):
     data = unpack(data)
     money = data[-1]
     tips = [num for num in data[:-1]]
-    
-    good_tips = len(set(tips) ^ set(winner_numbers))
+
+    good_tips = len(set(tips) & set(winner_numbers))
 
     num_list = winner_numbers
     money *= good_tips

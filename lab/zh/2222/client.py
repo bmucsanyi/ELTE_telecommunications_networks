@@ -22,7 +22,12 @@ def main():
 
         print('Numbers:')
 
-        num_list = [int(input('> ')) for _ in range(5)]
+        num_list = [int(elem) for elem in input('> ').split()]
+
+        if len(num_list) != 5:
+            raise ValueError('invalid tips')
+            sys.exit(-1)
+
         data = pack(num_list, money)
 
         udp.sendto(data, ('localhost', 22222))  # 22222 is the server
