@@ -1,12 +1,20 @@
-import socket
+import hashlib
 import json
-import select
-import struct
 import os
+import select
+import socket
+import struct
 
 
 def unpack_history(data):
     return struct.unpack('10iQ', data)
+
+
+def check_checksum(received_checksum, data):
+    md5 = hashlib.md5()
+    md5.update(data)
+
+    return received_checksum == md5.digest()
 
 
 def main():
@@ -30,10 +38,18 @@ def main():
                     print("New client:", client_addr)
                     inputs.append(client_socket)
                 else:
-                    data = s.recv(struct.calcsize('10iQ'))
+                    data = s.recv(struct.calcsize('10iQ') + 16)
                     if not data:
                         inputs.remove(s)
                         s.close()
+                        continue
+
+                    received_checksum = data[-16:]
+                    data = data[:-16]
+
+                    if not check_checksum(received_checksum, data):
+                        print('Invalid data received!')
+                        print('Dropping package...')
                         continue
 
                     data = unpack_history(data)

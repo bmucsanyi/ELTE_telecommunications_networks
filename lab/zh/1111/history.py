@@ -29,7 +29,7 @@ def main():
                         if not data:
                             inputs.remove(s)
                             s.close()
-                            break
+                            continue
                         udp.sendto(data, ("localhost", 22222))
                         data = data.decode().split(':')
                         tips = [int(num) for num in data[:-1]]
