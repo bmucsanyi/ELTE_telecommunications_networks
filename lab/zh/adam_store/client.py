@@ -6,9 +6,11 @@ def prepare(data):
     product, quantity = data.split()
     quantity = int(quantity)
 
+    length = len(product)
     product += '-' * (20 - len(product))
+    product = product.encode()
 
-    return struct.pack('i20si', len(product), product, quantity)
+    return struct.pack('i20si', length, product, quantity)
 
 
 def main():
@@ -18,8 +20,10 @@ def main():
         print('List (product + quantity):')
 
         data = input()
-        while data != 'END 0':
+        while True:
             tcp.sendall(prepare(data))
+            if data == 'END 0':
+                break
             data = input()
 
         price = struct.unpack('i', tcp.recv(struct.calcsize('i')))[0]

@@ -33,11 +33,6 @@ def main():
                         client2list[client_socket] = ([], [])
                     else:
                         length = struct.unpack('i', s.recv(struct.calcsize('i')))[0]
-                        if not length:
-                            inputs.remove(s)
-                            del client2list[s]
-                            s.close()
-                            continue
 
                         product = s.recv(20).decode()
                         product = product[:length]
@@ -46,7 +41,10 @@ def main():
                         if product == 'END':
                             to_send = client2list[s][1]
                             if len(to_send):
-                                data = struct.pack(f'i{len(to_send)}i', len(to_send), *to_send)
+                                # data = struct.pack(f'i{len(to_send)}i', len(to_send), *to_send)
+                                data = struct.pack('i', len(to_send))
+                                udp.sendto(data, ('localhost', 22222))
+                                data = struct.pack(f'{len(to_send)}i', *to_send)
                                 udp.sendto(data, ('localhost', 22222))
 
                                 try:
@@ -58,11 +56,15 @@ def main():
                             else:
                                 s.sendall(struct.pack('i', 0))
                                 s.sendall(','.join(client2list[s][0]).encode())
+
+                            inputs.remove(s)
+                            del client2list[s]
+                            s.close()
                         else:
                             if product in stock.keys():
-                                client2list[s][0].append(product)
-                            else:
                                 client2list[s][1].append(stock[product] * quantity)
+                            else:
+                                client2list[s][0].append(product)
 
 
 if __name__ == "__main__":

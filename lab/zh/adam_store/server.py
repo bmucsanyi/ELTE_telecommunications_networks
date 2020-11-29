@@ -9,8 +9,9 @@ def main():
         server.bind(('localhost', 22222))
 
         while True:
-            req, addr = server.recvfrom(struct.calcsize('i') + 16)
-            length = struct.unpack('i', req)
+            req, addr = server.recvfrom(struct.calcsize('i'))
+            length = struct.unpack('i', req)[0]
+
             num_list = struct.unpack(f'{length}i', server.recvfrom(struct.calcsize(f'{length}i'))[0])
             result = sum(num_list)
 
