@@ -8,9 +8,11 @@ def main():
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as tcp:
         tcp.setblocking(False)
         tcp.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        tcp.bind(("localhost", 11111))
+        tcp.bind(('localhost', 11111))
         tcp.listen(1)
         with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as udp:
+            udp.settimeout(5)
+
             inputs = [tcp]
             outputs = []
             timeout = 1
@@ -22,7 +24,7 @@ def main():
                 for s in readable:
                     if s is tcp:
                         client_socket, client_addr = s.accept()
-                        print("New client:", client_addr)
+                        print('New client:', client_addr)
                         inputs.append(client_socket)
                     else:
                         data = s.recv(256)
@@ -30,12 +32,16 @@ def main():
                             inputs.remove(s)
                             s.close()
                             continue
-                        udp.sendto(data, ("localhost", 22222))
+                        udp.sendto(data, ('localhost', 22222))
                         data = data.decode().split(':')
                         tips = [int(num) for num in data[:-1]]
 
+                        try:
+                            resp, _ = udp.recvfrom(256)
+                        except socket.timeout:
+                            print('no response from server')
+                            continue
 
-                        resp, _ = udp.recvfrom(256)
                         decoded = resp.decode().split(':')
                         prize = int(decoded[-1])
                         winner_numbers = [int(num) for num in decoded[:-1]]

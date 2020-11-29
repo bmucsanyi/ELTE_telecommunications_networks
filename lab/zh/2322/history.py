@@ -21,7 +21,7 @@ def main():
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as tcp:
         tcp.setblocking(False)
         tcp.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        tcp.bind(("localhost", 11111))
+        tcp.bind(('localhost', 11111))
         tcp.listen(1)
 
         inputs = [tcp]
@@ -35,7 +35,7 @@ def main():
             for s in readable:
                 if s is tcp:
                     client_socket, client_addr = s.accept()
-                    print("New client:", client_addr)
+                    print('New client:', client_addr)
                     inputs.append(client_socket)
                 else:
                     data = s.recv(struct.calcsize('10iQ') + 16)

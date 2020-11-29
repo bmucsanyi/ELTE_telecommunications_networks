@@ -10,7 +10,6 @@ def unpack(resp, num):
     return struct.unpack(f'{num}i', resp)
 
 
-
 def main():
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as tcp:
         with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as udp:

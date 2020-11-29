@@ -3,7 +3,7 @@ import socket
 
 
 def handle_client(data, addr, sock, winner_numbers):
-    print("New client:", addr)
+    print('New client:', addr)
 
     data = data.decode().split(':')
     money = int(data[-1])
@@ -22,7 +22,7 @@ def handle_client(data, addr, sock, winner_numbers):
 def main():
     with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as server:
         server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        server.bind(("localhost", 22222))
+        server.bind(('localhost', 22222))
 
         winner_numbers = [random.randint(1, 20) for _ in range(5)]
         while True:

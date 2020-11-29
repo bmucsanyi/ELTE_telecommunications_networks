@@ -13,6 +13,8 @@ def unpack(resp):
 
 def main():
     with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as udp:
+        udp.settimeout(5)
+
         print('Money:')
         try:
             money = int(input('> '))
@@ -32,13 +34,16 @@ def main():
 
         udp.sendto(data, ('localhost', 22222))  # 22222 is the server
 
-        resp, _ = udp.recvfrom(struct.calcsize('5iQ'))
-        resp = unpack(resp)
-        prize = resp[-1]
-        winner_numbers = [num for num in resp[:-1]]
+        try:
+            resp, _ = udp.recvfrom(struct.calcsize('5iQ'))
+            resp = unpack(resp)
+            prize = resp[-1]
+            winner_numbers = [num for num in resp[:-1]]
 
-        print(f'You won {prize} dollars.')
-        print('The winner numbers were', winner_numbers)
+            print(f'You won {prize} dollars.')
+            print('The winner numbers were', winner_numbers)
+        except socket.timeout:
+            print('no response from server')
 
 
 if __name__ == "__main__":

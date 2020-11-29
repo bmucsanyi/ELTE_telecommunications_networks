@@ -37,7 +37,7 @@ def main():
                     if not data:  # CTRL + C
                         inputs.remove(s)
                         s.close()
-                        break
+                        continue
                     num = unpack(data)
                     num_list = [random.randint(1, 100) for _ in range(num)]
                     resp = pack(num_list)

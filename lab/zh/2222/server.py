@@ -16,7 +16,7 @@ def pack_history(winner_numbers, tips, money):
 
 
 def handle_client(data, addr, sock, winner_numbers, history):
-    print("New client:", addr)
+    print('New client:', addr)
 
     # Client
     data = unpack(data)
@@ -39,7 +39,7 @@ def handle_client(data, addr, sock, winner_numbers, history):
 def main():
     with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as server:
         server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        server.bind(("localhost", 22222))
+        server.bind(('localhost', 22222))
 
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as history:
             history.connect(('localhost', 11111))  # 11111 is the history server
