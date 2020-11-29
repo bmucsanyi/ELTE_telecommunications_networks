@@ -42,6 +42,10 @@ def main():
                             to_send = client2list[s][1]
                             if len(to_send):
                                 # data = struct.pack(f'i{len(to_send)}i', len(to_send), *to_send)
+                                # this doesn't work with udp on the server side
+                                # TCP works like a stream: you can read it in steps you prefer
+                                # UDP works with DGRAM: you get packages into your buffer
+                                # and if you read a bit of a package, the rest gets thrown away
                                 data = struct.pack('i', len(to_send))
                                 udp.sendto(data, ('localhost', 22222))
                                 data = struct.pack(f'{len(to_send)}i', *to_send)
