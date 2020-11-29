@@ -45,15 +45,19 @@ def main():
 
                         if product == 'END':
                             to_send = client2list[s][1]
-                            data = struct.pack(f'i{len(to_send)}i', len(to_send), *to_send)
-                            udp.sendto(data, ('localhost', 22222))
+                            if len(to_send):
+                                data = struct.pack(f'i{len(to_send)}i', len(to_send), *to_send)
+                                udp.sendto(data, ('localhost', 22222))
 
-                            try:
-                                resp = udp.recvfrom(struct.calcsize('i'))[0]
-                                s.sendall(resp)
+                                try:
+                                    resp = udp.recvfrom(struct.calcsize('i'))[0]
+                                    s.sendall(resp)
+                                    s.sendall(','.join(client2list[s][0]).encode())
+                                except socket.timeout:
+                                    print('no answer from server')
+                            else:
+                                s.sendall(struct.pack('i', 0))
                                 s.sendall(','.join(client2list[s][0]).encode())
-                            except socket.timeout:
-                                print('no answer from server')
                         else:
                             if product in stock.keys():
                                 client2list[s][0].append(product)
