@@ -48,22 +48,18 @@ def main():
                         if cmd != b'BID':
                             print('unknown command received')
                         else:
-                            if price >= 10**6:
-                                print('end of licit')
-                                done = True
-                                break
-                            elif price > max_price:
+                            if price > max_price:
                                 max_price = price
                                 log.sendto(struct.pack('i', price), ('localhost', 22222))
-                                s.sendall(struct.pack('3si', b'OK ', price))
+
+                                if price >= 10**6:
+                                    print('end of licit')
+                                    done = True
+                                    break
+                                else:
+                                    s.sendall(struct.pack('3si', b'OK ', price))
                             else:
                                 s.sendall(struct.pack('3si', b'LOW', max_price))
-
-            for s in inputs:
-                if s is not server:
-                    s.sendall(struct.pack('3si', b'END', 0))
-                    inputs.remove(s)
-                    s.close()
 
 
 if __name__ == "__main__":

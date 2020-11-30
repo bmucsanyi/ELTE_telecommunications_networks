@@ -26,9 +26,14 @@ def main():
                 tcp.sendall(data)
 
                 resp = tcp.recv(struct.calcsize('3si'), socket.MSG_WAITALL)
+
+                if not resp:
+                    print('end of licit')
+                    break
+
                 result, received_price = unpack(resp)
 
-                print(f'received: ({resp},{result})')
+                print(f'received: ({result.decode()},{received_price})')
             else:
                 print('unknown command')
 
