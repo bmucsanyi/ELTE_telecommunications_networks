@@ -1,11 +1,6 @@
-import random
 import socket
 import struct
 import select
-
-
-def pack(num_list):
-    return struct.pack(f'{len(num_list)}i', *num_list)
 
 
 def unpack(req):
@@ -24,7 +19,7 @@ def main():
             outputs = []
             timeout = 1
 
-            max_price = 2000
+            max_price = 2000  # kikiáltási ár
             readable = []
 
             done = False

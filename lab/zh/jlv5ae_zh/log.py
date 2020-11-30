@@ -1,18 +1,5 @@
-import random
 import socket
 import struct
-
-
-def pack(num_list, money):
-    return struct.pack('5iQ', *num_list, money)
-
-
-def unpack(resp):
-    return struct.unpack('5iQ', resp)
-
-
-def pack_history(winner_numbers, tips, money):
-    return struct.pack('10iQ', *winner_numbers, *tips, money)
 
 
 def handle_client(data):
@@ -28,6 +15,7 @@ def main():
         while True:
             data, _ = server.recvfrom(struct.calcsize('i'))
             # nem kell timeout, hiszen egy szerver
+            # a kliensbe viszont kéne, ha küldenénk választ
             handle_client(data)
 
 
